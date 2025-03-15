@@ -2,19 +2,13 @@
 <html>
 
 <head>
- <title>Lemmikki-sovellus</title>
+  <title>Kirjautuminen</title>
 </head>
 
 <body>
- <h1>PetCare</h1>
- <p>
-   <b>Tervetuloa!</b>
- </p>
-
- <body>
-  {% if session.username%}
+  {% if session.username %}
   <p>
-    Olet kirjautunut käyttäjällä {{ session.username }}
+    Olet kirjautunut nimellä {{ session.username }}
   </p>
   <p>
     <a href="/logout">Kirjaudu ulos</a>
@@ -32,7 +26,6 @@
     <input type="submit" value="Kirjaudu" />
   </form>
   {% endif %}
-
 </body>
 
 </html>
