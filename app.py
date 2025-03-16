@@ -10,11 +10,68 @@ app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    pets = db.query("""
+        SELECT p.pet_name, b.breed_name, p.description
+        FROM pets p
+        JOIN breeds b ON p.breed_id = b.id
+    """)
+    return render_template("index.html", pets=pets)
 
 @app.route("/register")
 def register():
     return render_template("register.html")
+
+@app.route("/new_item") #uusi julkaisu
+def new_item():
+    return render_template("new_item.html")
+
+@app.route("/new_pet", methods=["GET", "POST"])
+def new_pet():
+    if request.method == "GET":
+        # 1) Käyttäjä avaa sivun -> Näytetään valittavissa olevat eläinlajit
+        animal_types = db.get_animal_types()  # = animals-taulun rivit
+        return render_template("new_pet.html", animal_types=animal_types)
+
+    # 2) POST-pyyntö = käyttäjä on valinnut jonkun lajin
+    animal_id = request.form.get("animal_id")
+
+    # Jos lajia ei valittu, palataan sivulle
+    if not animal_id:
+        animal_types = db.get_animal_types()
+        return render_template("new_pet.html", animal_types=animal_types)
+
+    # Haetaan rodut valitulle lajille
+    breeds = db.get_breeds_by_animal(animal_id)
+    animal_types = db.get_animal_types()
+
+    # Näytetään new_pet.html, jossa "breeds" on annettu -> ladataan toinen lomake
+    return render_template(
+        "new_pet.html",
+        animal_types=animal_types,
+        breeds=breeds,
+        selected_animal_id=animal_id
+    )
+
+@app.route("/save_pet", methods=["POST"])
+def save_pet():
+    # Käyttäjä lähetti lopulliset tiedot
+    animal_id = request.form.get("animal_id")
+    breed_id = request.form.get("breed_id")
+    pet_name = request.form.get("title")
+    description = request.form.get("description")
+
+    # Varmistetaan, että kaikki tarvittava on annettu
+    if not animal_id or not breed_id or not pet_name:
+        return "VIRHE: Kaikki kentät (laji, rotu, nimi) eivät ole täytettyjä"
+
+    # Tallennetaan tietokantaan
+    sql = """INSERT INTO pets (animal_id, breed_id, pet_name, description)
+             VALUES (?, ?, ?, ?)"""
+    db.execute(sql, [animal_id, breed_id, pet_name, description])
+
+    # Palataan etusivulle
+    return redirect("/")
+
 
 @app.route("/create", methods=["POST"])
 def create():

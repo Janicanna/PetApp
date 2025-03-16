@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lisää lemmikki</title>
+</head>
+
+<body>
+    <h1>Lisää lemmikki</h1>
+
+    <!-- Ensimmäinen lomake: valitaan eläinlaji -->
+    <form action="/new_pet" method="post">
+        <p>
+            Eläin: <br />
+            <select name="animal_id">
+                <option value="">Valitse eläin</option>
+                {% for animal in animal_types %}
+                    <option value="{{ animal.id }}">{{ animal.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <input type="submit" value="Seuraava">
+    </form>
+
+    {% if breeds %}  <!-- Jos käyttäjä on jo valinnut eläimen, näytetään toinen lomake -->
+    <form action="/save_pet" method="post">
+        <p>
+            Rotu: <br />
+            <select name="breed_id">
+                <option value="">Valitse rotu</option>
+                {% for breed in breeds %}
+                    <option value="{{ breed.id }}">{{ breed.breed_name }}</option>
+                {% endfor %}
+            </select>
+        </p>
+
+        <p>
+            Lemmikin nimi: <br />
+            <input type="text" name="title" required />
+        </p>
+
+        <p>
+            Kerro lemmikistä: <br />
+            <textarea name="description" rows="8" cols="60"></textarea>
+        </p>
+
+        <input type="hidden" name="animal_id" value="{{ selected_animal_id }}">
+        <input type="submit" value="Lisää lemmikki">
+    </form>
+    {% endif %}
+</body>
+
+</html>

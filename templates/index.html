@@ -2,37 +2,44 @@
 <html>
 
 <head>
- <title>Lemmikki-sovellus</title>
+  <title>Lemmikki-sovellus</title>
+  <style>
+    .link-container span {
+      margin-right: 10px;
+    }
+  </style>
 </head>
 
 <body>
- <h1>PetCare</h1>
- <p>
-   <b>Tervetuloa!</b>
- </p>
+  <h1>PetCare</h1>
 
- <body>
-  {% if session.username%}
-  <p>
-    Olet kirjautunut käyttäjällä {{ session.username }}
-  </p>
-  <p>
-    <a href="/logout">Kirjaudu ulos</a>
-  </p>
+  {% if session.username %}
+    <p>Olet kirjautunut käyttäjällä {{ session.username }}</p>
+    <p><a href="/logout">Kirjaudu ulos</a></p>
+    <p><a href="/new_pet">Lisää lemmikki</a></p>
+    <p><a href="/new_item">Uusi julkaisu</a></p>
   {% else %}
-  <form action="/login" method="post">
-    <p>
-      Tunnus: <br />
-      <input type="text" name="username" />
+    <p><b>Tervetuloa!</b></p>
+    <p class="link-container">
+      <span><a href="/login">Kirjaudu sisään</a></span>
+      <span><a href="/register">Luo tunnus</a></span>
     </p>
-    <p>
-      Salasana: <br />
-      <input type="password" name="password" />
-    </p>
-    <input type="submit" value="Kirjaudu" />
-  </form>
   {% endif %}
 
+  <h2>Lisätyt lemmikit</h2>
+  {% if pets %}
+    <ul>
+      {% for pet in pets %}
+        <li>
+          <strong>{{ pet.pet_name }}</strong> 
+          ({{ pet.breed_name }})<br>
+          {{ pet.description }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Ei vielä lisättyjä lemmikkejä.</p>
+  {% endif %}
 </body>
 
 </html>
