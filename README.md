@@ -10,6 +10,17 @@ Tämä on sovellus, joka antaa käyttäjille mahdollisuuden luoda profiileja lem
 - Lemmikkikuvien jakaminen ja reagoiminen: Käyttäjä voi jakaa lemmikkikuvia ja vuorovaikuttaa muiden käyttäjien jakamien kuvien kanssa (esim. tykkäykset ja kommentit).
 - Lemmikkien jaottelu: Lemmikkejä voidaan jaotella eri kategorioihin, kuten koirat, kissat jne., sekä roduittain. Käyttäjät voivat suorittaa hakuja eri kategorioiden ja rotujen mukaan, mikä helpottaa lemmikkien löytämistä ja seurattavaksi valitsemista.
 
+## Lemmikkien hallinta
+- Käyttäjä voi lisätä lemmikkejä ja määrittää:
+ - Lajin
+ - Rodun
+ - Lemmikin nimen ja kuvaus
+- Käyttäjä voi poistaa lisätyn lemmikin
+- Käyttäjä voi täydentää lemmikkiin päivittäisiä toimia:
+ - Mahdollisuus lisätä kertoja mm.(Ulkoilu, ruokailu jne.)
+ - Tietoihin tallentuu kellonaika ja päivän kerrat
+
+
 ## Tekniset vaatimukset
 
 - Sovellus on toteutettu Python-kielellä ja Flask-kirjastoa käyttäen.
