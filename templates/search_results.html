@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>Hakutulokset</title></head>
+<body>
+  <h1>Hakutulokset sanalle "{{ term }}"</h1>
+  {% if results %}
+    <ul>
+      {% for pet in results %}
+        <li>
+          <a href="/pet/{{ pet.id }}">{{ pet.pet_name }} ({{ pet.breed_name }})</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Ei tuloksia.</p>
+  {% endif %}
+</body>
+</html>

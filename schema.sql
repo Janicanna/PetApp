@@ -18,10 +18,20 @@ CREATE TABLE breeds (
 
 CREATE TABLE pets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
     animal_id INTEGER NOT NULL,
     breed_id INTEGER NOT NULL,
     pet_name TEXT NOT NULL,
     description TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (animal_id) REFERENCES animals(id),
     FOREIGN KEY (breed_id) REFERENCES breeds(id)
+);
+
+CREATE TABLE pet_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pet_id INTEGER NOT NULL,
+    action_name TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (pet_id) REFERENCES pets(id)
 );

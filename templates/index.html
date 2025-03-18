@@ -5,20 +5,31 @@
   <title>Lemmikki-sovellus</title>
   <style>
     .link-container span {
-      margin-right: 10px;
+      margin-right: 10px; /* Lisää välin linkkien välille */
     }
   </style>
 </head>
 
 <body>
-  <h1>PetCare</h1>
+  <h1>PetCare</h1> <!-- Otsikko -->
 
-  {% if session.username %}
+  {% if session.username %}  <!-- Jos käyttäjä on kirjautunut sisään -->
     <p>Olet kirjautunut käyttäjällä {{ session.username }}</p>
     <p><a href="/logout">Kirjaudu ulos</a></p>
     <p><a href="/new_pet">Lisää lemmikki</a></p>
-    <p><a href="/new_item">Uusi julkaisu</a></p>
-  {% else %}
+
+    <h2>Omat lemmikkisi</h2>
+    {% if pets %}
+      <ul>
+        {% for pet in pets %}
+          <li><a href="/pet/{{ pet.id }}">{{ pet.pet_name }}</a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Sinulla ei ole vielä lisättyjä lemmikkejä.</p>
+    {% endif %}
+
+  {% else %}  <!-- Jos käyttäjä ei ole kirjautunut sisään -->
     <p><b>Tervetuloa!</b></p>
     <p class="link-container">
       <span><a href="/login">Kirjaudu sisään</a></span>
@@ -26,20 +37,6 @@
     </p>
   {% endif %}
 
-  <h2>Lisätyt lemmikit</h2>
-  {% if pets %}
-    <ul>
-      {% for pet in pets %}
-        <li>
-          <strong>{{ pet.pet_name }}</strong> 
-          ({{ pet.breed_name }})<br>
-          {{ pet.description }}
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Ei vielä lisättyjä lemmikkejä.</p>
-  {% endif %}
 </body>
 
 </html>

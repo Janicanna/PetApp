@@ -9,10 +9,13 @@ def get_connection():
 
 def execute(sql, params=[]):
     con = get_connection()
-    result = con.execute(sql, params)
-    con.commit()
-    g.last_insert_id = result.lastrowid
-    con.close()
+    try:
+        result = con.execute(sql, params)
+        con.commit()
+    except sqlite3.OperationalError as e:
+        print("SQLite OperationalError:", e)  # Tulostaa virheen, jos tietokanta on lukittu
+    finally:
+        con.close()  # Sulkee tietokantayhteyden aina
 
 def last_insert_id():
     return getattr(g, "last_insert_id", None)    
