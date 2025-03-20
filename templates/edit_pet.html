@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Muokkaa lemmikkiä</title>
+</head>
+<body>
+
+<h1>Muokkaa lemmikin tietoja</h1>
+
+<form action="/pet/{{ pet.id }}/update" method="post">
+    <p>
+        Lemmikin nimi: <br />
+        <input type="text" name="pet_name" value="{{ pet.pet_name }}" required>
+    </p>
+    <p>
+        Kuvaus: <br />
+        <textarea rows="5" cols="50" name="description">{{ pet.description }}</textarea>
+    </p>
+
+    <input type="submit" value="Tallenna muutokset">
+</form>
+
+<!-- Takaisin lemmikin sivulle -->
+<p><a href="/pet/{{ pet.id }}">Takaisin</a></p>
+
+</body>
+</html>

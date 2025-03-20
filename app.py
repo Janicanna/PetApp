@@ -12,14 +12,14 @@ app.secret_key = config.secret_key
 def index():
     pets = []  # Oletusarvo: jos käyttäjä ei ole kirjautunut sisään, ei näytetä lemmikkejä
 
-    if "username" in session:  # Tarkistetaan, onko käyttäjä kirjautunut sisään
+    if "username" in session:
         username = session["username"]
         user_query = db.query("SELECT id FROM users WHERE username = ?", [username])
 
         if user_query:
-            user_id = user_query[0][0]  # Haetaan käyttäjän ID
+            user_id = user_query[0][0]
 
-            # Haetaan vain kirjautuneen käyttäjän lemmikit
+            # Haetaan kirjautuneen käyttäjän lemmikit
             pets = db.query("""
                 SELECT p.id, p.pet_name, b.breed_name, p.description
                 FROM pets p
@@ -36,20 +36,20 @@ def register():
 
 @app.route("/new_pet", methods=["GET", "POST"])
 def new_pet():
-    # # Jos avataan sivu GET-metodilla, näytetään eläinlajit
+    # Jos avataan sivu GET-metodilla, näytetään eläinlajit
     if request.method == "GET":
-        animal_types = db.get_animal_types()  # animals-taulun rivit
+        animal_types = db.get_animal_types()
         return render_template("new_pet.html", animal_types=animal_types)
 
-    # # POST-pyyntö → Käyttäjä valinnut eläimen lajin
+    # POST-pyyntö → Käyttäjä valinnut eläimen lajin
     animal_id = request.form.get("animal_id")
 
-    # # Jos lajia ei valittu, palataan samaan sivuun
+    # Jos lajia ei valittu, palataan samaan sivuun
     if not animal_id:
         animal_types = db.get_animal_types()
         return render_template("new_pet.html", animal_types=animal_types)
 
-    # # Haetaan valitun eläimen rodut ja näytetään toinen lomake
+    # Haetaan valitun eläimen rodut ja näytetään toinen lomake
     breeds = db.get_breeds_by_animal(animal_id)
     animal_types = db.get_animal_types()
     return render_template("new_pet.html",
@@ -59,7 +59,6 @@ def new_pet():
 
 @app.route("/save_pet", methods=["POST"])
 def save_pet():
-    # Käyttäjän pitää olla kirjautuneena
     if "username" not in session:
         return redirect("/login")
 
@@ -88,6 +87,59 @@ def save_pet():
 
     # Palataan etusivulle
     return redirect("/")
+
+@app.route("/pet/<int:pet_id>/edit", methods=["GET"])
+def edit_pet(pet_id):
+    if "username" not in session:
+        return redirect("/login")  # Varmistetaan, että käyttäjä on kirjautunut
+
+    username = session["username"]
+    user_query = db.query("SELECT id FROM users WHERE username = ?", [username])
+
+    if not user_query:
+        return "Virhe: Käyttäjää ei löytynyt"
+
+    user_id = user_query[0][0]
+
+    # Tarkistetaan, onko lemmikki tämän käyttäjän omistuksessa
+    pet_query = db.query("SELECT * FROM pets WHERE id = ? AND user_id = ?", [pet_id, user_id])
+
+    if not pet_query:
+        return "Virhe: Sinulla ei ole oikeuksia muokata tätä lemmikkiä."
+
+    pet = pet_query[0]
+    return render_template("edit_pet.html", pet=pet)
+
+@app.route("/pet/<int:pet_id>/update", methods=["POST"])
+def update_pet(pet_id):
+    if "username" not in session:
+        return redirect("/login")  # Varmistetaan, että käyttäjä on kirjautunut
+
+    username = session["username"]
+    user_query = db.query("SELECT id FROM users WHERE username = ?", [username])
+
+    if not user_query:
+        return "Virhe: Käyttäjää ei löytynyt"
+
+    user_id = user_query[0][0]
+
+    # Varmistetaan, että käyttäjä omistaa lemmikin
+    pet_query = db.query("SELECT * FROM pets WHERE id = ? AND user_id = ?", [pet_id, user_id])
+
+    if not pet_query:
+        return "Virhe: Sinulla ei ole oikeuksia muokata tätä lemmikkiä."
+
+    # Haetaan lomakkeen tiedot
+    new_name = request.form.get("pet_name")
+    new_description = request.form.get("description")
+
+    if not new_name:
+        return "Virhe: Lemmikin nimi ei voi olla tyhjä."
+
+    # Päivitetään tietokantaan
+    db.execute("UPDATE pets SET pet_name = ?, description = ? WHERE id = ?", [new_name, new_description, pet_id])
+
+    return redirect(f"/pet/{pet_id}")  # Ohjataan takaisin lemmikin tarkastelusivulle
 
 @app.route("/create", methods=["POST"])
 def create():
@@ -125,17 +177,17 @@ def login():
     sql = "SELECT password_hash FROM users WHERE username = ?"
     result = db.query(sql, [username])
 
-    # 🔹 Jos käyttäjää ei löydy, näytetään virheilmoitus
+    # Jos käyttäjää ei löydy, näytetään virheilmoitus
     if not result:
         return render_template("login.html", error="VIRHE: Käyttäjätunnus tai salasana on väärin.")
 
     password_hash = result[0][0]
 
-    # 🔹 Jos salasana on väärin, näytetään virheilmoitus
+    # Jos salasana on väärin, näytetään virheilmoitus
     if not check_password_hash(password_hash, password):
         return render_template("login.html", error="VIRHE: Käyttäjätunnus tai salasana on väärin.")
 
-    # 🔹 Jos käyttäjätunnus ja salasana ovat oikein, kirjaudutaan sisään
+    # Jos käyttäjätunnus ja salasana ovat oikein, kirjaudutaan sisään
     session["username"] = username
     return redirect("/")
 
