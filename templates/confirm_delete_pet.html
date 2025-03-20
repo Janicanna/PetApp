@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vahvista poisto</title>
+</head>
+<body>
+
+<h1>Oletko varma, että haluat poistaa lemmikin?</h1>
+
+<p>Lemmikki: <strong>{{ pet.pet_name }}</strong></p>
+
+<!-- Lomake vahvistaa poiston ja ohjaa etusivulle -->
+<form action="/delete_pet/{{ pet.id }}" method="post">
+    <input type="submit" value="✅Kyllä, poista">
+</form>
+
+<!-- Peruuta ja palaa takaisin lemmikin sivulle -->
+<p><a href="/pet/{{ pet.id }}">❌Peruuta</a></p>
+
+</body>
+</html>

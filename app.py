@@ -249,23 +249,44 @@ def add_pet_action(pet_id):
     # # Ohjataan takaisin lemmikin sivulle
     return redirect(f"/pet/{pet_id}")
 
-# -------------
-# # 1.2 Kohta: Lemmikin poistaminen
-# # Tätä reittiä kutsutaan esim. pet.html-sivulla olevasta lomakkeesta
-# -------------
+@app.route("/confirm_delete_pet/<int:pet_id>")
+def confirm_delete_pet(pet_id):
+    # Haetaan lemmikin tiedot, jotta ne voidaan näyttää vahvistussivulla
+    pet_query = db.query("SELECT id, pet_name FROM pets WHERE id = ?", [pet_id])
+
+    if not pet_query:
+        return "Virhe: Lemmikkiä ei löytynyt."
+
+    pet = pet_query[0]
+    return render_template("confirm_delete_pet.html", pet=pet)
 
 @app.route("/delete_pet/<int:pet_id>", methods=["POST"])
 def delete_pet(pet_id):
-    """
-    Poistaa lemmikin `pets`-taulusta ja myös siihen liittyvät pet_logs-merkinnät.
-    Ohjaa etusivulle onnistuneen poiston jälkeen.
-    """
+    if "username" not in session:
+        return redirect("/login")  # Varmistetaan, että käyttäjä on kirjautunut
+
+    username = session["username"]
+    user_query = db.query("SELECT id FROM users WHERE username = ?", [username])
+
+    if not user_query:
+        return "Virhe: Käyttäjää ei löytynyt."
+
+    user_id = user_query[0][0]
+
+    # Tarkistetaan, onko käyttäjä lemmikin omistaja
+    pet_query = db.query("SELECT id FROM pets WHERE id = ? AND user_id = ?", [pet_id, user_id])
+
+    if not pet_query:
+        return "Virhe: Sinulla ei ole oikeuksia poistaa tätä lemmikkiä."
+
     # Poistetaan ensin lemmikin päiväkirjamerkinnät, jotta tietokanta ei anna virhettä
     db.execute("DELETE FROM pet_logs WHERE pet_id=?", [pet_id])
 
     # Poistetaan varsinainen lemmikki
     db.execute("DELETE FROM pets WHERE id=?", [pet_id])
 
-    # Ohjataan etusivulle
+    # Ohjataan etusivulle poiston jälkeen
     return redirect("/")
+
+
 

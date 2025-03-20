@@ -40,9 +40,7 @@ Kuvaus: {{ pet.description }}</p>
 <p><a href="/">Etusivulle</a></p>
 
 <!-- Poista-lemmikki -painike -->
-<form action="/delete_pet/{{ pet.id }}" method="post" style="display:inline;">
-  <input type="submit" value="Poista lemmikki">
-</form>
+<p><a href="/confirm_delete_pet/{{ pet.id }}">Poista lemmikki<a/></p>
 
 </body>
 </html>
