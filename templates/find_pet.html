@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <title>Etsi lemmikki</title>
+  <style>
+    .link-container span {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Etsi lemmikki 🐾</h1>
+
+  <!-- Hakulomake -->
+  <form action="/find_pet" method="get">
+    <p>
+      Hakusana: <input type="text" name="query" value="{{ query }}">
+      <input type="submit" value="Etsi">
+    </p>
+  </form>
+
+  {% if query %}
+    <h2>Hakutulokset</h2>
+
+    {% if results %}
+      <ul>
+        {% for pet in results %}
+          <li><a href="/pet/{{ pet.id }}">{{ pet.pet_name }} ({{ pet.breed_name }})</a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Ei hakutuloksia sanalla "{{ query }}".</p>
+    {% endif %}
+  {% endif %}
+
+  <p><a href="/">Etusivulle</a></p>
+</body>
+</html>

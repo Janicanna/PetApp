@@ -10,37 +10,34 @@
 Rotu: {{ pet.breed_name }}<br>
 Kuvaus: {{ pet.description }}</p>
 
-{% if session.username %}
+{% if is_owner %}
     <p><a href="/pet/{{ pet.id }}/edit">Muokkaa lemmikkiä</a></p>
 {% endif %}
 
 <h2>Päiväkohtaiset tiedot</h2>
-<!-- Näytetään päiväkohtaiset kertyneet määrät -->
 <ul>
-  <li>Ruokailu: {{ daily_counts["ruokailu"]["cnt"] if "ruokailu" in daily_counts else 0 }} kertaa
+  <li>🥕: {{ daily_counts["ruokailu"]["cnt"] if "ruokailu" in daily_counts else 0 }} x
       (Viimeisin: {{ daily_counts["ruokailu"]["latest"] if "ruokailu" in daily_counts else "–" }})</li>
-  <li>Ulkoilu: {{ daily_counts["ulkoilu"]["cnt"] if "ulkoilu" in daily_counts else 0 }} kertaa
+  <li>🌳: {{ daily_counts["ulkoilu"]["cnt"] if "ulkoilu" in daily_counts else 0 }} x
       (Viimeisin: {{ daily_counts["ulkoilu"]["latest"] if "ulkoilu" in daily_counts else "–" }})</li>
-  <li>Kakat: {{ daily_counts["kakat"]["cnt"] if "kakat" in daily_counts else 0 }} kertaa</li>
-  <li>Pissat: {{ daily_counts["pissat"]["cnt"] if "pissat" in daily_counts else 0 }} kertaa
-      (Viimeisin: {{ daily_counts["pissat"]["latest"] if "pissat" in daily_counts else "–" }})</li>
-  <li>Koulutus: {{ daily_counts["koulutus"]["cnt"] if "koulutus" in daily_counts else 0 }} kertaa</li>
+  <li>💩: {{ daily_counts["kakat"]["cnt"] if "kakat" in daily_counts else 0 }} x</li>
+  <li>🧠: {{ daily_counts["koulutus"]["cnt"] if "koulutus" in daily_counts else 0 }} x</li>
 </ul>
 
-
-<!-- Linkit (tai lomakkeet) lisämerkintöjen tekemiseen -->
+{% if is_owner %}
 <form action="/pet/{{ pet.id }}/action" method="post">
-  <button name="action_name" value="ruokailu">Lisää ruokailu</button>
-  <button name="action_name" value="ulkoilu">Lisää ulkoilu</button>
-  <button name="action_name" value="kakat">Lisää kakat</button>
-  <button name="action_name" value="pissat">Lisää pissat</button>
-  <button name="action_name" value="koulutus">Lisää koulutus</button>
+  <button name="action_name" value="ruokailu">Lisää ruokailu🥕</button>
+  <button name="action_name" value="ulkoilu">Lisää ulkoilu🌳</button>
+  <button name="action_name" value="kakat">Lisää kakat💩</button>
+  <button name="action_name" value="koulutus">Lisää koulutus🧠</button>
 </form>
+{% endif %}
 
 <p><a href="/">Etusivulle</a></p>
 
-<!-- Poista-lemmikki -painike -->
+{% if is_owner %}
 <p><a href="/confirm_delete_pet/{{ pet.id }}">Poista lemmikki<a/></p>
+{% endif %}
 
 </body>
 </html>

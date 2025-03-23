@@ -11,12 +11,13 @@
 </head>
 
 <body>
-  <h1>PetCare</h1> <!-- Otsikko -->
+  <h1>🐱PetCare🐶</h1>
 
   {% if session.username %}  <!-- Jos käyttäjä on kirjautunut sisään -->
     <p>Olet kirjautunut käyttäjällä {{ session.username }}</p>
     <p><a href="/logout">Kirjaudu ulos</a></p>
-    <p><a href="/new_pet">Lisää lemmikki</a></p>
+    <p><a href="/new_pet">Lisää lemmikki🐕🐇🐀🐠🐢</a></p>
+    <p><a href="/find_pet">Etsi lemmikki</a></p>
 
     <h2>Omat lemmikkisi</h2>
     {% if pets %}
@@ -30,7 +31,7 @@
     {% endif %}
 
   {% else %}  <!-- Jos käyttäjä ei ole kirjautunut sisään -->
-    <p><b>Tervetuloa!</b></p>
+    <p><b>Tervetuloa!🐾</b></p>
     <p class="link-container">
       <span><a href="/login">Kirjaudu sisään</a></span>
       <span><a href="/register">Luo tunnus</a></span>
