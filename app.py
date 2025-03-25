@@ -102,7 +102,11 @@ def save_pet():
     animal_id = request.form.get("animal_id")
     breed_id = request.form.get("breed_id")
     pet_name = request.form.get("title")
+    if len(pet_name) > 50:
+        abort(403)
     description = request.form.get("description")
+    if len(description) > 400:
+        abort(403)
 
     if not animal_id or not breed_id or not pet_name:
         return "Virhe: Kaikki kentät on täytettävä."
@@ -236,5 +240,23 @@ def find_pet():
     else:
         results = []                   
     return render_template("find_pet.html", query=query, results=results)
+
+# Käyttäjän profiili
+@app.route("/user/<int:user_id>")
+def user_profile(user_id):
+    user = db.query("SELECT username FROM users WHERE id = ?", [user_id])
+    if not user:
+        abort(404)
+
+    username = user[0][0]
+    pets_list = db.query("""
+        SELECT p.id, p.pet_name, b.breed_name
+        FROM pets p
+        JOIN breeds b ON p.breed_id = b.id
+        WHERE p.user_id = ?
+        ORDER BY p.pet_name
+    """, [user_id])
+
+    return render_template("user_profile.html", username=username, pets=pets_list)
 
 

@@ -35,12 +35,12 @@
 
         <p>
             Lemmikin nimi: <br />
-            <input type="text" name="title" required>
+            <input type="text" name="title" maxlength="50" required>
         </p>
 
         <p>
             Kerro lemmikistä: <br />
-            <textarea rows="5" cols="50" name="description"></textarea>
+            <textarea rows="5" cols="50" name="description" maxlength="400"></textarea>
         </p>
 
         <input type="hidden" name="animal_id" value="{{ selected_animal_id }}">

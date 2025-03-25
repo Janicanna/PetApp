@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ username }} - profiili</title>
+</head>
+<body>
+  <h1>Käyttäjän {{ username }} lemmikit</h1>
+
+  {% if pets %}
+    <ul>
+      {% for pet in pets %}
+        <li><a href="/pet/{{ pet.id }}">{{ pet.pet_name }} ({{ pet.breed_name }})</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Käyttäjällä ei ole vielä lemmikkejä.</p>
+  {% endif %}
+
+  <p><a href="/">Etusivulle</a></p>
+</body>
+</html>

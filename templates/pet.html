@@ -9,6 +9,7 @@
 <p>Eläin: {{ pet.animal_name }}<br>
 Rotu: {{ pet.breed_name }}<br>
 Kuvaus: {{ pet.description }}</p>
+<p>Omistaja: <a href="/user/{{ pet.user_id }}">{{ pet.owner_username }}</a></p>
 
 {% if is_owner %}
     <p><a href="/pet/{{ pet.id }}/edit">Muokkaa lemmikkiä</a></p>

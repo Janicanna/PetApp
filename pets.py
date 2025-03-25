@@ -24,11 +24,13 @@ def get_user_pets():
 def get_pet_by_id(pet_id):
     # Palauttaa yksittäisen lemmikin tiedot, mukaan lukien user_id
     pet = db.query("""
-        SELECT p.id, p.pet_name, p.description, p.animal_id, p.user_id,
-               b.breed_name, a.name AS animal_name
+        SELECT p.id, p.pet_name, p.description, p.animal_id,
+               b.breed_name, a.name AS animal_name,
+               p.user_id, u.username AS owner_username
         FROM pets p
         JOIN breeds b ON p.breed_id = b.id
         JOIN animals a ON p.animal_id = a.id
+        JOIN users u ON p.user_id = u.id
         WHERE p.id=?
     """, [pet_id])
     return pet[0] if pet else None
@@ -64,15 +66,16 @@ def delete_pet(pet_id):
 def find_pets(query):
     like_term = f"%{query}%"
     sql = """
-      SELECT p.id, p.pet_name, b.breed_name
-      FROM pets p
-      JOIN breeds b ON p.breed_id = b.id
-      JOIN animals a ON p.animal_id = a.id
-      WHERE p.pet_name LIKE ?
-         OR b.breed_name LIKE ?
-         OR a.name LIKE ?
+        SELECT p.id, p.pet_name, b.breed_name
+        FROM pets p
+        JOIN breeds b ON p.breed_id = b.id
+        JOIN animals a ON p.animal_id = a.id
+        WHERE p.pet_name LIKE ?
+           OR b.breed_name LIKE ?
+           OR a.name LIKE ?
+           OR p.description LIKE ?
     """
-    return db.query(sql, [like_term, like_term, like_term])
+    return db.query(sql, [like_term, like_term, like_term, like_term])
 
 def get_allowed_actions(animal_id):
     sql = "SELECT action_name FROM animal_actions WHERE animal_id = ?"
