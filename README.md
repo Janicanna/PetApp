@@ -11,6 +11,7 @@ Tämä on sovellus, joka antaa käyttäjille mahdollisuuden luoda profiileja lem
 - Lemmikkien jaottelu: Lemmikkejä voidaan jaotella eri kategorioihin, kuten koirat, kissat jne., sekä roduittain. Käyttäjät voivat suorittaa hakuja eri kategorioiden ja rotujen mukaan, mikä helpottaa lemmikkien löytämistä ja seurattavaksi valitsemista.
 - Käyttäjä voi hakea lemmikkejä nimellä tai rodun perusteella.
 - Hakutuloksista pääsee tarkkailemaan muiden lisäämiä lemmikkejä.
+- Käyttäjät voivat tarkastella muiden käyttäjien profiileja lemmikkien tarkastelu sivulla olevan linkin kautta.
 
 ## Lemmikkien hallinta
 - Käyttäjä voi lisätä lemmikkejä ja määrittää:
