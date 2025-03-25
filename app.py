@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session, abort
 from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import db
@@ -105,7 +105,7 @@ def save_pet():
     description = request.form.get("description")
 
     if not animal_id or not breed_id or not pet_name:
-        return "Virhe: Kaikki kentät (laji, rotu, nimi) on täytettävä."
+        return "Virhe: Kaikki kentät on täytettävä."
 
     # Tallennetaan tietokantaan
     sql = """INSERT INTO pets (user_id, animal_id, breed_id, pet_name, description)
@@ -158,9 +158,17 @@ def show_pet(pet_id):
 # Lemmikin muokkaaminen
 @app.route("/pet/<int:pet_id>/edit", methods=["GET"])
 def edit_pet(pet_id):
+    if "username" not in session:
+        return redirect("/login")
+
     pet = pets.get_pet_by_id(pet_id)
     if not pet:
-        return "Virhe: Sinulla ei ole oikeuksia muokata tätä lemmikkiä."
+        return "Virhe: Lemmikkiä ei löytynyt"
+
+    # Tarkistetaan omistajuus
+    user_id = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0][0]
+    if pet["user_id"] != user_id:
+        abort(403)
 
     return render_template("edit_pet.html", pet=pet)
 
@@ -175,21 +183,37 @@ def update_pet(pet_id):
     return redirect(f"/pet/{pet_id}")
 
 # Lemmikin poistaminen
-@app.route("/confirm_delete_pet/<int:pet_id>")
-def confirm_delete_pet(pet_id):
-    pet_query = db.query("SELECT id, pet_name FROM pets WHERE id = ?", [pet_id])
-
-    if not pet_query:
-        return "Virhe: Lemmikkiä ei löytynyt."
-
-    pet = pet_query[0]
-    return render_template("confirm_delete_pet.html", pet=pet)
-
 @app.route("/delete_pet/<int:pet_id>", methods=["POST"])
 def delete_pet(pet_id):
-    if not pets.delete_pet(pet_id):
-        return "Virhe: Sinulla ei ole oikeuksia poistaa tätä lemmikkiä."
+    if "username" not in session:
+        return redirect("/login")
+
+    pet = pets.get_pet_by_id(pet_id)
+    if not pet:
+        return "Virhe: Lemmikkiä ei löytynyt"
+
+    user_id = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0][0]
+    if pet["user_id"] != user_id:
+        abort(403)
+
+    db.execute("DELETE FROM pet_logs WHERE pet_id = ?", [pet_id])
+    db.execute("DELETE FROM pets WHERE id = ?", [pet_id])
+
     return redirect("/")
+
+#Vahvista poisto
+@app.route("/confirm_delete_pet/<int:pet_id>")
+def confirm_delete_pet(pet_id):
+    pet = pets.get_pet_by_id(pet_id)
+    if not pet:
+        return "Virhe: Lemmikkiä ei löytynyt."
+    if "username" not in session:
+        return redirect("/login")
+    user_id = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0][0]
+    if pet["user_id"] != user_id:
+        abort(403)
+
+    return render_template("confirm_delete_pet.html", pet=pet)
 
 # Lemmikin päivän merkintöjen lisääminen (ruokailu, ulkoilu jne.)
 @app.route("/pet/<int:pet_id>/action", methods=["POST"])
