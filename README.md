@@ -12,6 +12,7 @@ Tämä on sovellus, joka antaa käyttäjille mahdollisuuden luoda profiileja lem
 - Käyttäjä voi hakea lemmikkejä nimellä tai rodun perusteella.
 - Hakutuloksista pääsee tarkkailemaan muiden lisäämiä lemmikkejä.
 - Käyttäjät voivat tarkastella muiden käyttäjien profiileja lemmikkien tarkastelu sivulla olevan linkin kautta.
+- Käyttäjä voi jättää kommentin toisen lemmikin profiiliin ja tarvittaessa poistaa tämän.
 
 ## Lemmikkien hallinta
 - Käyttäjä voi lisätä lemmikkejä ja määrittää:
