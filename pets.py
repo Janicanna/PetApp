@@ -81,3 +81,20 @@ def get_allowed_actions(animal_id):
     sql = "SELECT action_name FROM animal_actions WHERE animal_id = ?"
     result = db.query(sql, [animal_id])
     return [row["action_name"] for row in result]
+
+def add_comment(pet_id, user_id, content):
+    sql = "INSERT INTO comments (pet_id, user_id, content) VALUES (?, ?, ?)"
+    db.execute(sql, [pet_id, user_id, content])
+
+def get_comments_for_pet(pet_id):
+    sql = """
+        SELECT c.id, c.user_id, c.content, c.timestamp, u.username
+        FROM comments c
+        JOIN users u ON c.user_id = u.id
+        WHERE c.pet_id = ?
+        ORDER BY c.timestamp DESC
+    """
+    return db.query(sql, [pet_id])
+
+def can_delete_comment(comment, current_user_id, is_pet_owner):
+    return comment["user_id"] == current_user_id or is_pet_owner

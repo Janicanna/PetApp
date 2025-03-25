@@ -128,19 +128,21 @@ def show_pet(pet_id):
     # 1. Selvitetään onko käyttäjä kirjautunut
     username = session.get("username")
     is_owner = False
+    session_user_id = None
+
     if username:
         user_id_result = db.query("SELECT id FROM users WHERE username = ?", [username])
         if user_id_result:
-            user_id = user_id_result[0][0]
-            owner_check = db.query("SELECT id FROM pets WHERE id = ? AND user_id = ?", [pet_id, user_id])
+            session_user_id = user_id_result[0][0]
+            owner_check = db.query("SELECT id FROM pets WHERE id = ? AND user_id = ?", [pet_id, session_user_id])
             is_owner = bool(owner_check)
 
-    # 2. Haetaan päivän lokitiedot
+    # 2. Haetaan päivän lokitiedot (määrät + viimeisin aika)
     sql_logs = """
-      SELECT action_name, COUNT(*) AS cnt, MAX(timestamp) AS latest_time
-      FROM pet_logs
-      WHERE pet_id=? AND DATE(timestamp) = DATE('now')
-      GROUP BY action_name
+        SELECT action_name, COUNT(*) AS cnt, MAX(timestamp) AS latest_time
+        FROM pet_logs
+        WHERE pet_id=? AND DATE(timestamp) = DATE('now')
+        GROUP BY action_name
     """
     logs = db.query(sql_logs, [pet_id])
     daily_counts = {}
@@ -155,11 +157,19 @@ def show_pet(pet_id):
     actions_query = db.query("SELECT action_name FROM animal_actions WHERE animal_id = ?", [animal_id])
     allowed_actions = [row["action_name"] for row in actions_query]
 
-    return render_template("pet.html", pet=pet_info, is_owner=is_owner,
-                           daily_counts=daily_counts, allowed_actions=allowed_actions)
-    
+    # 4. Haetaan kommentit
+    comments = pets.get_comments_for_pet(pet_id)
+
+    return render_template("pet.html",
+                           pet=pet_info,
+                           is_owner=is_owner,
+                           session_user_id=session_user_id,
+                           daily_counts=daily_counts,
+                           allowed_actions=allowed_actions,
+                           comments=comments)
+
 # Lemmikin muokkaaminen
-@app.route("/pet/<int:pet_id>/edit", methods=["GET"])
+@app.route("/pet/<int:pet_id>/edit", methods=["GET", "POST"])
 def edit_pet(pet_id):
     if "username" not in session:
         return redirect("/login")
@@ -172,15 +182,40 @@ def edit_pet(pet_id):
     if pet["user_id"] != user_id:
         abort(403)
 
-    return render_template("edit_pet.html", pet=pet)
+    animal_types = db.get_animal_types()
+    selected_animal_id = request.form.get("animal_id") or pet["animal_id"]
+    breeds = db.get_breeds_by_animal(selected_animal_id)
+
+    return render_template("edit_pet.html", pet=pet,
+                           animal_types=animal_types,
+                           selected_animal_id=int(selected_animal_id),
+                           breeds=breeds)
 
 @app.route("/pet/<int:pet_id>/update", methods=["POST"])
 def update_pet(pet_id):
+    if "username" not in session:
+        return redirect("/login")
+
+    username = session["username"]
+    user_id = db.query("SELECT id FROM users WHERE username = ?", [username])[0][0]
+
+    pet = pets.get_pet_by_id(pet_id)
+    if not pet or pet["user_id"] != user_id:
+        abort(403)
+
     new_name = request.form.get("pet_name")
     new_description = request.form.get("description")
+    new_animal_id = request.form.get("animal_id")
+    new_breed_id = request.form.get("breed_id")
 
-    if not pets.update_pet(pet_id, new_name, new_description):
-        abort(403)
+    if not all([new_name, new_animal_id, new_breed_id]):
+        return "Virhe: Kaikki kentät on täytettävä."
+
+    db.execute("""
+        UPDATE pets
+        SET pet_name = ?, description = ?, animal_id = ?, breed_id = ?
+        WHERE id = ? AND user_id = ?
+    """, [new_name, new_description, new_animal_id, new_breed_id, pet_id, user_id])
 
     return redirect(f"/pet/{pet_id}")
 
@@ -258,5 +293,52 @@ def user_profile(user_id):
     """, [user_id])
 
     return render_template("user_profile.html", username=username, pets=pets_list)
+
+@app.route("/pet/<int:pet_id>/comment", methods=["POST"])
+def add_comment(pet_id):
+    if "username" not in session:
+        return redirect("/login")
+
+    content = request.form.get("comment")
+    if not content or len(content.strip()) == 0:
+        return "Virhe: Tyhjää kommenttia ei voida lähettää."
+
+    # Hae käyttäjän ID
+    user_id_query = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])
+    if not user_id_query:
+        abort(403)
+
+    user_id = user_id_query[0][0]
+
+    sql = "INSERT INTO comments (pet_id, user_id, content) VALUES (?, ?, ?)"
+    db.execute(sql, [pet_id, user_id, content])
+
+    return redirect(f"/pet/{pet_id}")
+
+@app.route("/comment/<int:comment_id>/delete", methods=["POST"])
+def delete_comment(comment_id):
+    if "username" not in session:
+        return redirect("/login")
+
+    user_id = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0][0]
+
+    # Haetaan kommentin tiedot
+    comment_info = db.query("SELECT pet_id, user_id FROM comments WHERE id = ?", [comment_id])
+    if not comment_info:
+        abort(404)
+
+    pet_id = comment_info[0]["pet_id"]
+    comment_owner_id = comment_info[0]["user_id"]
+
+    pet_info = db.query("SELECT user_id FROM pets WHERE id = ?", [pet_id])
+    is_pet_owner = pet_info and pet_info[0]["user_id"] == user_id
+
+    if user_id == comment_owner_id or is_pet_owner:
+        db.execute("DELETE FROM comments WHERE id = ?", [comment_id])
+    else:
+        abort(403)
+
+    return redirect(f"/pet/{pet_id}")
+
 
 

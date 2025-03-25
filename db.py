@@ -13,9 +13,9 @@ def execute(sql, params=[]):
         result = con.execute(sql, params)
         con.commit()
     except sqlite3.OperationalError as e:
-        print("SQLite OperationalError:", e)  # Tulostaa virheen, jos tietokanta on lukittu
+        print("SQLite OperationalError:", e)
     finally:
-        con.close()  # Sulkee tietokantayhteyden aina
+        con.close() 
 
 def last_insert_id():
     return getattr(g, "last_insert_id", None)    
