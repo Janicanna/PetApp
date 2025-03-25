@@ -117,26 +117,21 @@ def save_pet():
 # Lemmikin tarkastelu
 @app.route("/pet/<int:pet_id>")
 def show_pet(pet_id):
-    sql_pet = """
-        SELECT p.id, p.user_id, p.pet_name, p.description,
-               b.breed_name, a.name AS animal_name
-        FROM pets p
-        JOIN breeds b ON p.breed_id = b.id
-        JOIN animals a ON p.animal_id = a.id
-        WHERE p.id=?
-    """
-    pet_info = db.query(sql_pet, [pet_id])
+    pet_info = pets.get_pet_by_id(pet_id)
     if not pet_info:
         return "Virhe: Lemmikkiä ei löytynyt"
-    pet = pet_info[0]
 
-    # Onko nykyinen käyttäjä tämän lemmikin omistaja?
+    # 1. Selvitetään onko käyttäjä kirjautunut
+    username = session.get("username")
     is_owner = False
-    if "username" in session:
-        user_id = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0][0]
-        is_owner = (user_id == pet["user_id"])
+    if username:
+        user_id_result = db.query("SELECT id FROM users WHERE username = ?", [username])
+        if user_id_result:
+            user_id = user_id_result[0][0]
+            owner_check = db.query("SELECT id FROM pets WHERE id = ? AND user_id = ?", [pet_id, user_id])
+            is_owner = bool(owner_check)
 
-    # Haetaan päiväkohtaiset tiedot
+    # 2. Haetaan päivän lokitiedot (cnt + viimeisin aika)
     sql_logs = """
       SELECT action_name, COUNT(*) AS cnt, MAX(timestamp) AS latest_time
       FROM pet_logs
@@ -144,7 +139,6 @@ def show_pet(pet_id):
       GROUP BY action_name
     """
     logs = db.query(sql_logs, [pet_id])
-
     daily_counts = {}
     for row in logs:
         daily_counts[row["action_name"]] = {
@@ -152,7 +146,14 @@ def show_pet(pet_id):
             "latest": row["latest_time"][11:16] if row["latest_time"] else "–"
         }
 
-    return render_template("pet.html", pet=pet, daily_counts=daily_counts, is_owner=is_owner)
+    # 3. Haetaan eläimen sallitut toiminnot
+    allowed_actions = []
+    animal_id = pet_info["animal_id"]
+    actions_query = db.query("SELECT action_name FROM animal_actions WHERE animal_id = ?", [animal_id])
+    allowed_actions = [row["action_name"] for row in actions_query]
+
+    return render_template("pet.html", pet=pet_info, is_owner=is_owner,
+                           daily_counts=daily_counts, allowed_actions=allowed_actions)
 
 # Lemmikin muokkaaminen
 @app.route("/pet/<int:pet_id>/edit", methods=["GET"])

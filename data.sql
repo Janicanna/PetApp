@@ -1,7 +1,6 @@
 -- Lisää eläintyypit
 INSERT INTO animals (name) VALUES ('Koira'), ('Kissa'), ('Kala'), ('Jyrsijät'), ('Kanit');
 
--- Lisää rodut oikeaan eläintyyppiin
 INSERT INTO breeds (animal_id, breed_name) VALUES 
 -- Koirarodut (animal_id = 1)
 (1, 'Sekarotuinen'), (1, 'Kultainennoutaja'), (1, 'Dalmatialainen'),

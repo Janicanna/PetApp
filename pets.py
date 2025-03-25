@@ -24,7 +24,7 @@ def get_user_pets():
 def get_pet_by_id(pet_id):
     #Palauttaa yksittäisen lemmikin tiedot
     pet = db.query("""
-        SELECT p.id, p.pet_name, p.description,
+        SELECT p.id, p.pet_name, p.description, p.animal_id,
                b.breed_name, a.name AS animal_name
         FROM pets p
         JOIN breeds b ON p.breed_id = b.id
@@ -73,3 +73,8 @@ def find_pets(query):
          OR a.name LIKE ?
     """
     return db.query(sql, [like_term, like_term, like_term])
+
+def get_allowed_actions(animal_id):
+    sql = "SELECT action_name FROM animal_actions WHERE animal_id = ?"
+    result = db.query(sql, [animal_id])
+    return [row["action_name"] for row in result]

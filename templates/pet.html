@@ -16,20 +16,30 @@ Kuvaus: {{ pet.description }}</p>
 
 <h2>Päiväkohtaiset tiedot</h2>
 <ul>
-  <li>🥕: {{ daily_counts["ruokailu"]["cnt"] if "ruokailu" in daily_counts else 0 }} x
-      (Viimeisin: {{ daily_counts["ruokailu"]["latest"] if "ruokailu" in daily_counts else "–" }})</li>
-  <li>🌳: {{ daily_counts["ulkoilu"]["cnt"] if "ulkoilu" in daily_counts else 0 }} x
-      (Viimeisin: {{ daily_counts["ulkoilu"]["latest"] if "ulkoilu" in daily_counts else "–" }})</li>
-  <li>💩: {{ daily_counts["kakat"]["cnt"] if "kakat" in daily_counts else 0 }} x</li>
-  <li>🧠: {{ daily_counts["koulutus"]["cnt"] if "koulutus" in daily_counts else 0 }} x</li>
+  {% if "ruokailu" in allowed_actions %}
+    <li>🥕: {{ daily_counts["ruokailu"]["cnt"] if "ruokailu" in daily_counts else 0 }} x
+        (Viimeisin: {{ daily_counts["ruokailu"]["latest"] if "ruokailu" in daily_counts else "–" }})</li>
+  {% endif %}
+
+  {% if "ulkoilu" in allowed_actions %}
+    <li>🌳: {{ daily_counts["ulkoilu"]["cnt"] if "ulkoilu" in daily_counts else 0 }} x
+        (Viimeisin: {{ daily_counts["ulkoilu"]["latest"] if "ulkoilu" in daily_counts else "–" }})</li>
+  {% endif %}
+
+  {% if "kakat" in allowed_actions %}
+    <li>💩: {{ daily_counts["kakat"]["cnt"] if "kakat" in daily_counts else 0 }} x</li>
+  {% endif %}
+
+  {% if "koulutus" in allowed_actions %}
+    <li>🧠: {{ daily_counts["koulutus"]["cnt"] if "koulutus" in daily_counts else 0 }} x</li>
+  {% endif %}
 </ul>
 
 {% if is_owner %}
 <form action="/pet/{{ pet.id }}/action" method="post">
-  <button name="action_name" value="ruokailu">Lisää ruokailu🥕</button>
-  <button name="action_name" value="ulkoilu">Lisää ulkoilu🌳</button>
-  <button name="action_name" value="kakat">Lisää kakat💩</button>
-  <button name="action_name" value="koulutus">Lisää koulutus🧠</button>
+  {% for action in allowed_actions %}
+    <button name="action_name" value="{{ action }}">Lisää {{ action }}</button>
+  {% endfor %}
 </form>
 {% endif %}
 
