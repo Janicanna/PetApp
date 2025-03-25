@@ -94,7 +94,7 @@ def save_pet():
     user_query = db.query("SELECT id FROM users WHERE username = ?", [username])
 
     if not user_query:
-        return "Virhe: Käyttäjää ei löytynyt"
+        abort(403)
 
     user_id = user_query[0][0]
 
@@ -119,7 +119,7 @@ def save_pet():
 def show_pet(pet_id):
     pet_info = pets.get_pet_by_id(pet_id)
     if not pet_info:
-        return "Virhe: Lemmikkiä ei löytynyt"
+        abort(404)
 
     # 1. Selvitetään onko käyttäjä kirjautunut
     username = session.get("username")
@@ -131,7 +131,7 @@ def show_pet(pet_id):
             owner_check = db.query("SELECT id FROM pets WHERE id = ? AND user_id = ?", [pet_id, user_id])
             is_owner = bool(owner_check)
 
-    # 2. Haetaan päivän lokitiedot (cnt + viimeisin aika)
+    # 2. Haetaan päivän lokitiedot
     sql_logs = """
       SELECT action_name, COUNT(*) AS cnt, MAX(timestamp) AS latest_time
       FROM pet_logs
@@ -147,14 +147,13 @@ def show_pet(pet_id):
         }
 
     # 3. Haetaan eläimen sallitut toiminnot
-    allowed_actions = []
     animal_id = pet_info["animal_id"]
     actions_query = db.query("SELECT action_name FROM animal_actions WHERE animal_id = ?", [animal_id])
     allowed_actions = [row["action_name"] for row in actions_query]
 
     return render_template("pet.html", pet=pet_info, is_owner=is_owner,
                            daily_counts=daily_counts, allowed_actions=allowed_actions)
-
+    
 # Lemmikin muokkaaminen
 @app.route("/pet/<int:pet_id>/edit", methods=["GET"])
 def edit_pet(pet_id):
@@ -163,9 +162,8 @@ def edit_pet(pet_id):
 
     pet = pets.get_pet_by_id(pet_id)
     if not pet:
-        return "Virhe: Lemmikkiä ei löytynyt"
+        abort(404)
 
-    # Tarkistetaan omistajuus
     user_id = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0][0]
     if pet["user_id"] != user_id:
         abort(403)
@@ -178,7 +176,7 @@ def update_pet(pet_id):
     new_description = request.form.get("description")
 
     if not pets.update_pet(pet_id, new_name, new_description):
-        return "Virhe: Sinulla ei ole oikeuksia muokata tätä lemmikkiä."
+        abort(403)
 
     return redirect(f"/pet/{pet_id}")
 
@@ -190,7 +188,7 @@ def delete_pet(pet_id):
 
     pet = pets.get_pet_by_id(pet_id)
     if not pet:
-        return "Virhe: Lemmikkiä ei löytynyt"
+        abort(404)
 
     user_id = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0][0]
     if pet["user_id"] != user_id:
@@ -204,11 +202,13 @@ def delete_pet(pet_id):
 #Vahvista poisto
 @app.route("/confirm_delete_pet/<int:pet_id>")
 def confirm_delete_pet(pet_id):
-    pet = pets.get_pet_by_id(pet_id)
-    if not pet:
-        return "Virhe: Lemmikkiä ei löytynyt."
     if "username" not in session:
         return redirect("/login")
+
+    pet = pets.get_pet_by_id(pet_id)
+    if not pet:
+        abort(404)
+
     user_id = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0][0]
     if pet["user_id"] != user_id:
         abort(403)
