@@ -9,6 +9,8 @@ Tämä on sovellus, joka antaa käyttäjille mahdollisuuden luoda profiileja lem
 - Seuraaminen ja vuorovaikutus: Käyttäjä voi seurata ystäviensä lemmikkejä ja osallistua niiden aktiviteetteihin. Käyttäjä voi reagoida muiden lemmikkien toimintoihin, kuten kommenteilla ja tykkäyksillä.
 - Lemmikkikuvien jakaminen ja reagoiminen: Käyttäjä voi jakaa lemmikkikuvia ja vuorovaikuttaa muiden käyttäjien jakamien kuvien kanssa (esim. tykkäykset ja kommentit).
 - Lemmikkien jaottelu: Lemmikkejä voidaan jaotella eri kategorioihin, kuten koirat, kissat jne., sekä roduittain. Käyttäjät voivat suorittaa hakuja eri kategorioiden ja rotujen mukaan, mikä helpottaa lemmikkien löytämistä ja seurattavaksi valitsemista.
+- Käyttäjä voi hakea lemmikkejä nimellä tai rodun perusteella.
+- Hakutuloksista pääsee tarkkailemaan muiden lisäämiä lemmikkejä.
 
 ## Lemmikkien hallinta
 - Käyttäjä voi lisätä lemmikkejä ja määrittää:
