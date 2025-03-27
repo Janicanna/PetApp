@@ -23,6 +23,7 @@ Tämä on sovellus, joka antaa käyttäjille mahdollisuuden luoda profiileja lem
 - Käyttäjä voi täydentää lemmikkiin päivittäisiä toimia:
  - Mahdollisuus lisätä kertoja mm.(Ulkoilu, ruokailu jne.)
  - Tietoihin tallentuu kellonaika ja päivän kerrat
+ - Käyttäjä voi lisätä kuvan lemmikistä ja poistaa kuvan.
 
 
 ## Tekniset vaatimukset
