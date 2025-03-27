@@ -15,6 +15,14 @@ Kuvaus: {{ pet.description }}</p>
     <p><a href="/pet/{{ pet.id }}/edit">Muokkaa lemmikkiä</a></p>
 {% endif %}
 
+{% if is_owner %}
+<h3>Lisää kuva</h3>
+<form action="/pet/{{ pet.id }}/upload_image" method="post" enctype="multipart/form-data">
+  <input type="file" name="image" required>
+  <button type="submit">Lähetä kuva</button>
+</form>
+{% endif %}
+
 <h2>Päiväkohtaiset tiedot</h2>
 <ul>
   {% if "ruokailu" in allowed_actions %}
@@ -42,6 +50,46 @@ Kuvaus: {{ pet.description }}</p>
     <button name="action_name" value="{{ action }}">Lisää {{ action }}</button>
   {% endfor %}
 </form>
+{% endif %}
+
+<h2>Kuvat</h2>
+{% if images %}
+  {% for image in images %}
+    <div style="margin: 10px 0;">
+      <img src="{{ url_for('static', filename='uploads/' ~ image.filename) }}" alt="Kuva" width="300">
+      {% if is_owner %}
+        <!-- Poistonappi -->
+        <form action="/pet/{{ pet.id }}/delete_image/{{ image.id }}" method="post" style="display:inline;">
+          <button type="submit">Poista kuva</button>
+        </form>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% else %}
+  <p>Ei vielä lisättyjä kuvia.</p>
+{% endif %}
+
+<h2>Kommentit</h2>
+<ul>
+  {% for comment in comments %}
+    <li>
+      <b>{{ comment.username }}</b>: {{ comment.content }}
+      <i>({{ comment.timestamp[:10] }})</i>
+
+      {% if session.username and (comment.user_id == session_user_id or is_owner) %}
+        <form action="/comment/{{ comment.id }}/delete" method="post" style="display:inline;">
+          <button type="submit">Poista kommentti</button>
+        </form>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
+{% if session.username %}
+  <form action="/pet/{{ pet.id }}/comment" method="post">
+    <textarea name="comment" rows="3" cols="40" maxlength="500" placeholder="Kirjoita kommentti"></textarea><br>
+    <button type="submit">Lähetä kommentti</button>
+  </form>
 {% endif %}
 
 <p><a href="/">Etusivulle</a></p>

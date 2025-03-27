@@ -9,18 +9,42 @@
 
 <form action="/pet/{{ pet.id }}/update" method="post">
     <p>
-        Lemmikin nimi: <br />
-        <input type="text" name="pet_name" value="{{ pet.pet_name }}" required>
+      Lemmikin nimi:<br>
+      <input type="text" name="pet_name" value="{{ pet.pet_name }}" maxlength="50" required>
     </p>
+  
     <p>
-        Kuvaus: <br />
-        <textarea rows="5" cols="50" name="description">{{ pet.description }}</textarea>
+      Eläinlaji:<br>
+      <select name="animal_id" onchange="this.form.submit()">
+        {% for animal in animal_types %}
+          <option value="{{ animal.id }}" {% if animal.id == selected_animal_id %}selected{% endif %}>
+            {{ animal.name }}
+          </option>
+        {% endfor %}
+      </select>
     </p>
-
+  
+    {% if breeds %}
+    <p>
+      Rotu:<br>
+      <select name="breed_id" required>
+        {% for breed in breeds %}
+          <option value="{{ breed.id }}" {% if breed.id == pet.breed_id %}selected{% endif %}>
+            {{ breed.breed_name }}
+          </option>
+        {% endfor %}
+      </select>
+    </p>
+    {% endif %}
+  
+    <p>
+      Kuvaus:<br>
+      <textarea name="description" rows="5" cols="50" maxlength="400">{{ pet.description }}</textarea>
+    </p>
+  
     <input type="submit" value="Tallenna muutokset">
-</form>
+  </form>  
 
-<!-- Takaisin lemmikin sivulle -->
 <p><a href="/pet/{{ pet.id }}">Takaisin</a></p>
 
 </body>

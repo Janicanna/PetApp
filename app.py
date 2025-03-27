@@ -5,9 +5,15 @@ import config
 import db
 import pets
 from datetime import datetime, timezone, timedelta
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+UPLOAD_FOLDER = "static/uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # Etusivu, näyttää kirjautuneen käyttäjän lemmikit
 @app.route("/")
@@ -160,13 +166,18 @@ def show_pet(pet_id):
     # 4. Haetaan kommentit
     comments = pets.get_comments_for_pet(pet_id)
 
+    # 5. Haetaan kuvat
+    images = pets.get_images_for_pet(pet_id)
+
     return render_template("pet.html",
-                           pet=pet_info,
-                           is_owner=is_owner,
-                           session_user_id=session_user_id,
-                           daily_counts=daily_counts,
-                           allowed_actions=allowed_actions,
-                           comments=comments)
+                        pet=pet_info,
+                        is_owner=is_owner,
+                        session_user_id=session_user_id,
+                        daily_counts=daily_counts,
+                        allowed_actions=allowed_actions,
+                        comments=comments,
+                        images=images)
+
 
 # Lemmikin muokkaaminen
 @app.route("/pet/<int:pet_id>/edit", methods=["GET", "POST"])
@@ -340,5 +351,55 @@ def delete_comment(comment_id):
 
     return redirect(f"/pet/{pet_id}")
 
+#Kuvan lähetysreitti
+@app.route("/pet/<int:pet_id>/upload_image", methods=["POST"])
+def upload_image(pet_id):
+    if "username" not in session:
+        return redirect("/login")
 
+    pet = pets.get_pet_by_id(pet_id)
+    if not pet:
+        abort(404)
 
+    user_id = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0][0]
+    if pet["user_id"] != user_id:
+        abort(403)
+
+    file = request.files.get("image")
+    if not file or file.filename == "":
+        return "Virhe: Tiedosto puuttuu"
+
+    filename = secure_filename(file.filename)
+    filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    file.save(filepath)
+
+    db.save_image(pet_id, filename)
+    return redirect(f"/pet/{pet_id}")
+
+#Poista lisätty kuva
+@app.route("/pet/<int:pet_id>/delete_image/<int:image_id>", methods=["POST"])
+def delete_image(pet_id, image_id):
+    if "username" not in session:
+        return redirect("/login")
+    
+    pet = pets.get_pet_by_id(pet_id)
+    if not pet:
+        abort(404)
+    
+    # Hae kirjautuneen käyttäjän ID
+    user_id_result = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])
+    if not user_id_result:
+        abort(403)
+    user_id = user_id_result[0][0]
+
+    if pet["user_id"] != user_id:
+        abort(403)
+    
+    # Tarkista, että kuva kuuluu tähän lemmikkiin
+    image = db.query("SELECT id FROM images WHERE id = ? AND pet_id = ?", [image_id, pet_id])
+    if not image:
+        abort(404)
+    
+    db.execute("DELETE FROM images WHERE id = ?", [image_id])
+    
+    return redirect(f"/pet/{pet_id}")

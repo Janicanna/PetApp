@@ -39,3 +39,13 @@ def get_breeds_by_animal(animal_id):
     ).fetchall()
     con.close()
     return breeds
+
+def save_image(pet_id, filename):
+    sql = "INSERT INTO images (pet_id, filename) VALUES (?, ?)"
+    execute(sql, [pet_id, filename])
+
+def get_images_for_pet(pet_id):
+    sql = "SELECT id, filename FROM images WHERE pet_id = ?"
+    return query(sql, [pet_id])
+
+

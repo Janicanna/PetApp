@@ -96,5 +96,10 @@ def get_comments_for_pet(pet_id):
     """
     return db.query(sql, [pet_id])
 
+#Varmistaa kommentin poiston
 def can_delete_comment(comment, current_user_id, is_pet_owner):
     return comment["user_id"] == current_user_id or is_pet_owner
+
+#hakee kuvan
+def get_images_for_pet(pet_id):
+    return db.get_images_for_pet(pet_id)
