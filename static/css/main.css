@@ -1,0 +1,135 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .default-page {
+    background: url("../images/registerpic.png") no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    text-align: center; 
+  }
+  
+  /* Navigaatio (sama kaikille sivuille) */
+  nav {
+    background-color: #a54cf0;
+    overflow: hidden;
+  }
+  nav a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  nav a:hover {
+    background-color: #ddd;
+    color: #000000;
+  }
+  .link-container span {
+    margin-right: 10px;
+  }
+  
+  /* Taustakuva etusivulle */
+  .home-page {
+    background: url("../images/etus.png") no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  
+  /* Keskitetty laatikko etusivulle */
+  .home-container {
+    width: 100%;         
+    max-width: 1400px;   
+    margin: 40px auto;
+    background-color: transparent; 
+    padding: 20px;
+    text-align: center;
+  }
+  
+  
+  /* Taustakuva kirjautumis- ja rekisteröintisivuilla */
+  .login-page,
+  .register-page {
+    background: url("../images/registerpic.png") no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  
+  /* Lomakkeen laatikko kirjautumis- ja rekisteröintisivuilla */
+  .form-container {
+    width: 450px;
+    margin: 80px auto;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    text-align: left;
+  }
+  
+  .form-container input[type="text"],
+  .form-container input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .form-container input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #a54cf0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .form-container input[type="submit"]:hover {
+    background-color: #9142d1;
+  }
+  
+  /* valkoinen boksi kirjautuneelle käyttäjälle */
+  .loggedin-container {
+    width: 90%;         
+    max-width: 1200px;   
+    margin: 40px auto;   
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-size: 1.2rem;
+    text-align: center;
+  }  
+  
+  /* Erilliset laatikot omille ja kaikille lemmikeille */
+  .my-pets-box,
+  .all-pets-box {
+    background-color: #fafafa;
+    padding: 20px;         
+    margin-bottom: 30px;   /* Lisää isompi väli laatikoiden välille */
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    font-size: 1.2rem;
+  }
+
+  .pet-page {
+    background: url("../images/pet.png") no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  
+  .pet-page .content {
+    text-align: center;
+    padding: 20px;
+  }
+
+  

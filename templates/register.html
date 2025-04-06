@@ -1,29 +1,30 @@
-<!DOCTYPE html>
-<html lang="fi">
-<head>
-    <meta charset="UTF-8">
-    <title>Luo tunnus</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Luo tunnus{% endblock %}
+
+{% block body_class %}register-page{% endblock %}
+
+{% block content %}
+  <div class="form-container">
     <h1>Luo tunnus</h1>
     {% if error %}
       <p style="color: red;">{{ error }}</p>
     {% endif %}
     <form action="/create" method="post">
       <p>
-        Tunnus: <br>
-        <input type="text" name="username" value="{{ username or '' }}">
+        Tunnus:<br>
+        <input type="text" name="username" value="{{ username or '' }}" required>
       </p>
       <p>
-        Salasana: <br>
-        <input type="password" name="password1">
+        Salasana:<br>
+        <input type="password" name="password1" required>
       </p>
       <p>
-        Salasana uudestaan: <br>
-        <input type="password" name="password2">
+        Salasana uudestaan:<br>
+        <input type="password" name="password2" required>
       </p>
       <input type="submit" value="Luo tunnus">
     </form>
-    <p><a href="/">Takaisin</a></p>
-</body>
-</html>
+    <p><a href="/">Takaisin etusivulle</a></p>
+  </div>
+{% endblock %}

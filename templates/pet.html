@@ -2,6 +2,8 @@
 
 {% block title %}{{ pet.pet_name }}{% endblock %}
 
+{% block body_class %}pet-page{% endblock %}
+
 {% block content %}
 
 <h1>{{ pet.pet_name }}</h1>
@@ -23,7 +25,6 @@ Kuvaus: {{ pet.description }}</p>
 {% endif %}
 
 <h2>Päiväkohtaiset tiedot</h2>
-<ul>
   {% if "ruokailu" in allowed_actions %}
     <li>🥕: {{ daily_counts["ruokailu"]["cnt"] if "ruokailu" in daily_counts else 0 }} x
         (Viimeisin: {{ daily_counts["ruokailu"]["latest"] if "ruokailu" in daily_counts else "–" }})</li>
@@ -41,7 +42,6 @@ Kuvaus: {{ pet.description }}</p>
   {% if "koulutus" in allowed_actions %}
     <li>🧠: {{ daily_counts["koulutus"]["cnt"] if "koulutus" in daily_counts else 0 }} x</li>
   {% endif %}
-</ul>
 
 {% if is_owner %}
 <form action="/pet/{{ pet.id }}/action" method="post">
@@ -69,7 +69,6 @@ Kuvaus: {{ pet.description }}</p>
 {% endif %}
 
 <h2>Kommentit</h2>
-<ul>
   {% for comment in comments %}
     <li>
       <b>{{ comment.username }}</b>: {{ comment.content }}
@@ -82,7 +81,6 @@ Kuvaus: {{ pet.description }}</p>
       {% endif %}
     </li>
   {% endfor %}
-</ul>
 
 {% if session.username %}
   <form action="/pet/{{ pet.id }}/comment" method="post">

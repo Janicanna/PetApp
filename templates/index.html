@@ -2,50 +2,58 @@
 
 {% block title %}Etusivu - Lemmikki-sovellus{% endblock %}
 
+{% block body_class %}home-page{% endblock %}
+
 {% block content %}
-  <h1>🐱PetCare🐶</h1>
+  <!-- Voit poistaa tai muokata home-containerin kokonaan, jos haluat -->
+  <div class="home-container">
+    <h1>🐱PetCare🐶</h1>
 
-  {% if session.username %}
-    <p>Olet kirjautunut käyttäjällä {{ session.username }}</p>
-    <p><a href="/logout">Kirjaudu ulos</a></p>
-    <p><a href="/new_pet">Lisää lemmikki🐕🐇🐀🐠🐢</a></p>
+    {% if session.username %}
+      <!-- Leveä valkoinen laatikko -->
+      <div class="loggedin-container">
+        <p>Olet kirjautunut käyttäjällä {{ session.username }}</p>
+        <p><a href="/logout">Kirjaudu ulos</a></p>
+        <p><a href="/new_pet">🐕🐇Lisää lemmikki🐀🐠</a></p>
+        
+        <h2>Omat lemmikkisi</h2>
+        <div class="my-pets-box">
+          {% if pets %}
+              {% for pet in pets %}
+                <li><a href="/pet/{{ pet.id }}">{{ pet.pet_name }}</a></li>
+              {% endfor %}
+          {% else %}
+            <p>Sinulla ei ole vielä lisättyjä lemmikkejä.</p>
+          {% endif %}
+        </div>
 
-    <h2>Omat lemmikkisi</h2>
-    {% if pets %}
-      <ul>
-        {% for pet in pets %}
-          <li><a href="/pet/{{ pet.id }}">{{ pet.pet_name }}</a></li>
-        {% endfor %}
-      </ul>
+        <h2>Sovellukseen lisätyt lemmikit</h2>
+        <p><a href="/find_pet">Etsi lemmikki</a></p>
+
+        <div class="all-pets-box">
+          {% if grouped_pets %}
+            {% for animal, pet_list in grouped_pets.items() %}
+              <h3>{{ animal }}</h3>
+                {% for pet in pet_list %}
+                  <li>
+                    <a href="/pet/{{ pet.id }}">{{ pet.pet_name }}</a> - {{ pet.breed_name }}
+                    - Omistaja: <a href="/user/{{ pet.user_id }}">{{ pet.owner_username }}</a>
+                  </li>
+                {% endfor %}
+            {% endfor %}
+          {% else %}
+            <p>Ei lemmikkejä lisätty vielä.</p>
+          {% endif %}
+        </div>
+      </div>
+
     {% else %}
-      <p>Sinulla ei ole vielä lisättyjä lemmikkejä.</p>
+      <!-- Kirjautumaton käyttäjä -->
+      <p><b>Tervetuloa!🐾</b></p>
+      <p class="link-container">
+        <span><a href="/login">Kirjaudu sisään</a></span>
+        <span><a href="/register">Luo tunnus</a></span>
+      </p>
     {% endif %}
-    
-    <h2>Sovellukseen lisätyt lemmikit</h2>
-
-    <p><a href="/find_pet">Etsi lemmikki</a></p>
-    {% if grouped_pets %}
-      {% for animal, pets in grouped_pets.items() %}
-        <h3>{{ animal }}</h3>
-        <ul>
-          {% for pet in pets %}
-            <li>
-              <a href="/pet/{{ pet.id }}">{{ pet.pet_name }}</a> - {{ pet.breed_name }}
-              - Omistaja: <a href="/user/{{ pet.user_id }}">{{ pet.owner_username }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      {% endfor %}
-    {% else %}
-      <p>Ei lemmikkejä lisätty vielä.</p>
-    {% endif %}
-
-  {% else %}
-    <p><b>Tervetuloa!🐾</b></p>
-    <p class="link-container">
-      <span><a href="/login">Kirjaudu sisään</a></span>
-      <span><a href="/register">Luo tunnus</a></span>
-    </p>
-  {% endif %}
-  
+  </div>
 {% endblock %}
