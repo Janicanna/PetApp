@@ -15,11 +15,36 @@ UPLOAD_FOLDER = "static/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
+@app.context_processor
+def inject_user_id():
+    user_id = None
+    if "username" in session:
+        result = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])
+        if result:
+            user_id = result[0][0]
+    return dict(session_user_id=user_id)
+
 # Etusivu, näyttää kirjautuneen käyttäjän lemmikit
 @app.route("/")
 def index():
-    pets_list = pets.get_user_pets() if "username" in session else []
-    return render_template("index.html", pets=pets_list)
+    if "username" in session:
+        user_pets = pets.get_user_pets()
+        all_pets = db.query("""
+            SELECT p.id, p.pet_name, b.breed_name, a.name AS animal_name, p.user_id, u.username AS owner_username
+            FROM pets p
+            JOIN breeds b ON p.breed_id = b.id
+            JOIN animals a ON p.animal_id = a.id
+            JOIN users u ON p.user_id = u.id
+            ORDER BY a.name, p.pet_name
+        """)
+        grouped_pets = {}
+        for pet in all_pets:
+            animal = pet["animal_name"]
+            grouped_pets.setdefault(animal, []).append(pet)
+        # Voit välittää omat lemmikkisi muuttujana "pets" jos haluat:
+        return render_template("index.html", pets=user_pets, grouped_pets=grouped_pets)
+    else:
+        return render_template("index.html", pets=None, grouped_pets=None)
 
 # Käyttäjän rekisteröinti
 @app.route("/register")
@@ -33,7 +58,7 @@ def create():
     password2 = request.form["password2"]
 
     if password1 != password2:
-        return render_template("register.html", error="VIRHE: Salasanat eivät ole samat")
+        return render_template("register.html", error="VIRHE: Salasanat eivät ole samat", username=username)
 
     password_hash = generate_password_hash(password1)
 
@@ -41,7 +66,7 @@ def create():
         sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
         db.execute(sql, [username, password_hash])
     except sqlite3.IntegrityError:
-        return render_template("register.html", error="VIRHE: Tunnus on jo varattu")
+        return render_template("register.html", error="VIRHE: Tunnus on jo varattu", username=username)
 
     session["username"] = username  # Kirjataan käyttäjä sisään automaattisesti
     return redirect("/")
@@ -51,7 +76,7 @@ def create():
 def login():
     if request.method == "GET":
         return render_template("login.html")
-
+    
     username = request.form["username"]
     password = request.form["password"]
 
@@ -59,8 +84,9 @@ def login():
     result = db.query(sql, [username])
 
     if not result or not check_password_hash(result[0][0], password):
-        return render_template("login.html", error="VIRHE: Käyttäjätunnus tai salasana on väärin.")
-
+        # Palautetaan käyttäjänimi takaisin, jos virhe
+        return render_template("login.html", error="VIRHE: Käyttäjätunnus tai salasana on väärin.", username=username)
+    
     session["username"] = username
     return redirect("/")
 

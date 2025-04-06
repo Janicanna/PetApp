@@ -1,23 +1,14 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-  <title>Lemmikki-sovellus</title>
-  <style>
-    .link-container span {
-      margin-right: 10px; /* Lisää välin linkkien välille */
-    }
-  </style>
-</head>
+{% block title %}Etusivu - Lemmikki-sovellus{% endblock %}
 
-<body>
+{% block content %}
   <h1>🐱PetCare🐶</h1>
 
-  {% if session.username %}  <!-- Jos käyttäjä on kirjautunut sisään -->
+  {% if session.username %}
     <p>Olet kirjautunut käyttäjällä {{ session.username }}</p>
     <p><a href="/logout">Kirjaudu ulos</a></p>
     <p><a href="/new_pet">Lisää lemmikki🐕🐇🐀🐠🐢</a></p>
-    <p><a href="/find_pet">Etsi lemmikki</a></p>
 
     <h2>Omat lemmikkisi</h2>
     {% if pets %}
@@ -29,15 +20,32 @@
     {% else %}
       <p>Sinulla ei ole vielä lisättyjä lemmikkejä.</p>
     {% endif %}
+    
+    <h2>Sovellukseen lisätyt lemmikit</h2>
 
-  {% else %}  <!-- Jos käyttäjä ei ole kirjautunut sisään -->
+    <p><a href="/find_pet">Etsi lemmikki</a></p>
+    {% if grouped_pets %}
+      {% for animal, pets in grouped_pets.items() %}
+        <h3>{{ animal }}</h3>
+        <ul>
+          {% for pet in pets %}
+            <li>
+              <a href="/pet/{{ pet.id }}">{{ pet.pet_name }}</a> - {{ pet.breed_name }}
+              - Omistaja: <a href="/user/{{ pet.user_id }}">{{ pet.owner_username }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
+    {% else %}
+      <p>Ei lemmikkejä lisätty vielä.</p>
+    {% endif %}
+
+  {% else %}
     <p><b>Tervetuloa!🐾</b></p>
     <p class="link-container">
       <span><a href="/login">Kirjaudu sisään</a></span>
       <span><a href="/register">Luo tunnus</a></span>
     </p>
   {% endif %}
-
-</body>
-
-</html>
+  
+{% endblock %}

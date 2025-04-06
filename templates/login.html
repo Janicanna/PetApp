@@ -1,39 +1,25 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="fi">
 <head>
-  <title>Kirjautuminen</title>
-  <style>
-    .error {
-      color: red;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Kirjaudu sisään</title>
 </head>
-
 <body>
-  {% if session.username %}
-    <p>Olet kirjautunut nimellä {{ session.username }}</p>
-    <p><a href="/logout">Kirjaudu ulos</a></p>
-  {% else %}
     <h1>Kirjaudu sisään</h1>
-
-    {% if error %}  <!-- 🔹 Näytetään virheilmoitus, jos sellainen on -->
-      <p class="error">{{ error }}</p>
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
     {% endif %}
-
     <form action="/login" method="post">
       <p>
-        Tunnus: <br />
-        <input type="text" name="username" />
+        Tunnus:<br>
+        <input type="text" name="username" value="{{ username or '' }}">
       </p>
       <p>
-        Salasana: <br />
-        <input type="password" name="password" />
+        Salasana:<br>
+        <input type="password" name="password">
       </p>
-      <input type="submit" value="Kirjaudu" />
+      <input type="submit" value="Kirjaudu">
     </form>
-  {% endif %}
+    <p><a href="/">Takaisin</a></p>
 </body>
-
 </html>

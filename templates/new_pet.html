@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="fi">
-<head>
-    <meta charset="UTF-8">
-    <title>Lisää lemmikki</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Lisää lemmikki{% endblock %}
+
+{% block content %}
+
     <h1>Lisää lemmikki</h1>
     <form action="/new_pet" method="post">
         <p>
@@ -48,5 +47,4 @@
     </form>
     {% endif %}
 
-</body>
-</html>
+{% endblock %}

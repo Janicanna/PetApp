@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="fi">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ pet.pet_name }}</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}{{ pet.pet_name }}{% endblock %}
+
+{% block content %}
+
 <h1>{{ pet.pet_name }}</h1>
 <p>Eläin: {{ pet.animal_name }}<br>
 Rotu: {{ pet.breed_name }}<br>
@@ -98,5 +97,4 @@ Kuvaus: {{ pet.description }}</p>
 <p><a href="/confirm_delete_pet/{{ pet.id }}">Poista lemmikki<a/></p>
 {% endif %}
 
-</body>
-</html>
+{% endblock %}

@@ -1,7 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head><title>Hakutulokset</title></head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Hakutulokset{% endblock %}
+
+{% block content %}
+
   <h1>Hakutulokset sanalle "{{ term }}"</h1>
   {% if results %}
     <ul>
@@ -14,5 +16,4 @@
   {% else %}
     <p>Ei tuloksia.</p>
   {% endif %}
-</body>
-</html>
+{% endblock %}

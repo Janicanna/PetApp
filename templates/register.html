@@ -1,37 +1,29 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="fi">
 <head>
-  <title>Rekisteröinti</title>
-  <style>
-    .error {
-      color: red;
-      font-weight: bold;
-    }
-    </style>
+    <meta charset="UTF-8">
+    <title>Luo tunnus</title>
 </head>
-
 <body>
-
-  {% if error %}
-    <p class="error">{{ error }}</p>
-  {% endif %}
-  
-  <form action="/create" method="post">
-    <p>
-      Tunnus: <br />
-      <input type="text" name="username" />
-    </p>
-    <p>
-      Salasana: <br />
-      <input type="password" name="password1" />
-    </p>
-    <p>
-      Salasana uudestaan: <br />
-      <input type="password" name="password2" />
-    </p>
-    <input type="submit" value="Luo tunnus" />
-  </form>
+    <h1>Luo tunnus</h1>
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    <form action="/create" method="post">
+      <p>
+        Tunnus: <br>
+        <input type="text" name="username" value="{{ username or '' }}">
+      </p>
+      <p>
+        Salasana: <br>
+        <input type="password" name="password1">
+      </p>
+      <p>
+        Salasana uudestaan: <br>
+        <input type="password" name="password2">
+      </p>
+      <input type="submit" value="Luo tunnus">
+    </form>
+    <p><a href="/">Takaisin</a></p>
 </body>
-
 </html>
