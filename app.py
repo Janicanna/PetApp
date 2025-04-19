@@ -269,7 +269,10 @@ def delete_pet(pet_id):
     if pet["user_id"] != user_id:
         abort(403)
 
+    # Poista kaikki viitteet ennen pääpoistoa
     db.execute("DELETE FROM pet_logs WHERE pet_id = ?", [pet_id])
+    db.execute("DELETE FROM comments WHERE pet_id = ?", [pet_id])
+    db.execute("DELETE FROM images WHERE pet_id = ?", [pet_id])
     db.execute("DELETE FROM pets WHERE id = ?", [pet_id])
 
     return redirect("/")

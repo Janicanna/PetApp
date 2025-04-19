@@ -1,11 +1,11 @@
-<!-- confirm_delete_pet.html -->
-<!DOCTYPE html>
-<html lang="fi">
-<head>
-    <meta charset="UTF-8">
-    <title>Vahvista poisto</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Vahvista poisto{% endblock %}
+
+{% block body_class %}register-page{% endblock %}
+
+{% block content %}
+<div class="form-container">
   <h1>Haluatko varmasti poistaa lemmikin "{{ pet.pet_name }}"?</h1>
 
   <form action="/delete_pet/{{ pet.id }}" method="post">
@@ -13,5 +13,5 @@
   </form>
 
   <p><a href="/pet/{{ pet.id }}">Peruuta</a></p>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -19,3 +19,9 @@ INSERT INTO animal_actions (animal_id, action_name) VALUES
 
 -- Kani (id = 5)
 (5, 'ruokailu'), (5, 'ulkoilu');
+
+-- Matelijat (id = 6)
+(6, 'ruokailu'),
+
+-- Ötökät (id = 7)
+(7, 'ruokailu');

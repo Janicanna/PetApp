@@ -1,18 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Muokkaa lemmikkiä</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h1>Muokkaa lemmikin tietoja</h1>
+{% block title %}Muokkaa lemmikkiä{% endblock %}
 
-<form action="/pet/{{ pet.id }}/update" method="post">
+{% block body_class %}register-page{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h1>Muokkaa lemmikin tietoja</h1>
+
+  <form action="/pet/{{ pet.id }}/update" method="post">
     <p>
       Lemmikin nimi:<br>
       <input type="text" name="pet_name" value="{{ pet.pet_name }}" maxlength="50" required>
     </p>
-  
+
     <p>
       Eläinlaji:<br>
       <select name="animal_id" onchange="this.form.submit()">
@@ -23,7 +24,7 @@
         {% endfor %}
       </select>
     </p>
-  
+
     {% if breeds %}
     <p>
       Rotu:<br>
@@ -36,16 +37,15 @@
       </select>
     </p>
     {% endif %}
-  
+
     <p>
       Kuvaus:<br>
       <textarea name="description" rows="5" cols="50" maxlength="400">{{ pet.description }}</textarea>
     </p>
-  
+
     <input type="submit" value="Tallenna muutokset">
-  </form>  
+  </form>
 
-<p><a href="/pet/{{ pet.id }}">Takaisin</a></p>
-
-</body>
-</html>
+  <p><a href="/pet/{{ pet.id }}">Takaisin</a></p>
+</div>
+{% endblock %}

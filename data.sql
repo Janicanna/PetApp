@@ -1,5 +1,12 @@
 -- Lisää eläintyypit
-INSERT INTO animals (name) VALUES ('Koira'), ('Kissa'), ('Kala'), ('Jyrsijät'), ('Kanit');
+INSERT INTO animals (name) VALUES 
+('Koira'), 
+('Kissa'), 
+('Kala'), 
+('Jyrsijät'), 
+('Kanit'),
+('Matelijat'),
+('Ötökät');
 
 INSERT INTO breeds (animal_id, breed_name) VALUES 
 -- Koirarodut (animal_id = 1)
@@ -33,7 +40,7 @@ INSERT INTO breeds (animal_id, breed_name) VALUES
 (2, 'LaPerm'), (2, 'Cymric'), (2, 'Balinese'), (2, 'Chartreux'), 
 (2, 'Korat'), (2, 'Munchkin'), (2, 'Peterbald'), (2, 'Oriental'), 
 (2, 'Toyger'), (2, 'Cheetoh'), (2, 'Ojos Azules'), (2, 'Serengeti'), 
-(2, 'American Curl'), (2, 'European Shorthair'), (2, 'Exotic Shorthair');
+(2, 'American Curl'), (2, 'European Shorthair'), (2, 'Exotic Shorthair'),
 
 -- Kalarodut (animal_id = 3)
 (3, 'Kultakala'), (3, 'Betta'), (3, 'Neontetra'),
@@ -47,4 +54,12 @@ INSERT INTO breeds (animal_id, breed_name) VALUES
 
 -- Kanit (animal_id = 5)
 (5, 'Leijonanharjas'), (5, 'Kääpiöluppa'), (5, 'Belgianjätti'),
-(5, 'Hermeliini'), (5, 'Rex');
+(5, 'Hermeliini'), (5, 'Rex'),
+
+-- Matelijat (animal_id = 6)
+(6, 'Kuningaspyton'), (6, 'Boa'), (6, 'Gekko'), (6, 'Iguana'),
+(6, 'Vesikilpikonna'), (6, 'Maanikilpikonna'), (6, 'Anolis'),
+
+-- Ötökät (animal_id = 7)
+(7, 'Hämähäkki'), (7, 'Skorpioni'), (7, 'Torakka'), (7, 'Tuhatjalkainen'),
+(7, 'Heinäsirkka'), (7, 'Leppäkerttu');

@@ -25,7 +25,7 @@
     <form action="/save_pet" method="post">
         <p>
             Rotu: <br />
-            <select name="breed_id">
+            <select name="breed_id" required>
                 <option value="">Valitse rotu</option>
                 {% for breed in breeds %}
                     <option value="{{ breed.id }}">{{ breed.breed_name }}</option>
