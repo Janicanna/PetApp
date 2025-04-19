@@ -6,20 +6,20 @@
 <div class="new_pet-container">
 
     <h1>Lisää lemmikki</h1>
-    <form action="/new_pet" method="post">
-        <p>
-            Eläin: <br />
-            <select name="animal_id">
-                <option value="">Valitse eläin</option>
-                {% for animal in animal_types %}
-                    <option value="{{ animal.id }}" {% if selected_animal_id == animal.id %}selected{% endif %}>
-                        {{ animal.name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </p>
-        <input type="submit" value="Seuraava">
-    </form>
+    {% if not selected_animal_id %}
+  <form action="/new_pet" method="post">
+      <p>
+          Eläin: <br />
+          <select name="animal_id" required>
+              <option value="">Valitse eläin</option>
+              {% for animal in animal_types %}
+                  <option value="{{ animal.id }}">{{ animal.name }}</option>
+              {% endfor %}
+          </select>
+      </p>
+      <input type="submit" value="Seuraava">
+  </form>
+{% endif %}
 
     {% if breeds %} 
     <form action="/save_pet" method="post">

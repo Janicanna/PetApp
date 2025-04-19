@@ -33,5 +33,12 @@ Tämä on sovellus, joka antaa käyttäjille mahdollisuuden luoda profiileja lem
 - Kehitystyössä on käytetty Git-versionhallintaa ja GitHub-palvelua.
 - Sovelluksen käyttöliittymä muodostuu HTML-sivuista.
 
+## Asennusohjeet
 
+- Kloonaa projekti
+- Luo virtuaaliympäristö ja aktivoi se
+- Tarvittaessa asenna tarvittavat riippuvuudet
+- Luo config.py tiedosto projektin juureen ja lisää sinne oma secret_key
+- Alusta tietokanta komennolla sqlite3 database.db < schema.sql
+- Käynnistä sovellus komennolla flask run
 

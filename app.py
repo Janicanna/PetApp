@@ -124,24 +124,21 @@ def save_pet():
     # Haetaan käyttäjän ID
     username = session["username"]
     user_query = db.query("SELECT id FROM users WHERE username = ?", [username])
-
     if not user_query:
         abort(403)
-
     user_id = user_query[0][0]
 
-    # Haetaan lomakkeesta tiedot
-    animal_id = request.form.get("animal_id")
-    breed_id = request.form.get("breed_id")
-    pet_name = request.form.get("title")
-    if len(pet_name) > 50:
-        abort(403)
-    description = request.form.get("description")
-    if len(description) > 400:
-        abort(403)
+    # Haetaan ja siistitään lomakkeen tiedot
+    animal_id = request.form.get("animal_id", "").strip()
+    breed_id = request.form.get("breed_id", "").strip()
+    pet_name = request.form.get("title", "").strip()
+    description = request.form.get("description", "").strip()
 
     if not animal_id or not breed_id or not pet_name:
         return "Virhe: Kaikki kentät on täytettävä."
+
+    if len(pet_name) > 50 or len(description) > 400:
+        abort(403)
 
     # Tallennetaan tietokantaan
     sql = """INSERT INTO pets (user_id, animal_id, breed_id, pet_name, description)
@@ -222,10 +219,12 @@ def edit_pet(pet_id):
     animal_types = db.get_animal_types()
     selected_animal_id = request.form.get("animal_id") or pet["animal_id"]
     breeds = db.get_breeds_by_animal(selected_animal_id)
+    selected_breed_id = request.form.get("breed_id") or pet["breed_id"]
 
     return render_template("edit_pet.html", pet=pet,
                            animal_types=animal_types,
                            selected_animal_id=int(selected_animal_id),
+                           selected_breed_id=int(selected_breed_id),
                            breeds=breeds)
 
 @app.route("/pet/<int:pet_id>/update", methods=["POST"])

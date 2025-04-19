@@ -46,4 +46,11 @@ CREATE TABLE comments (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS images (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pet_id INTEGER NOT NULL,
+    filename TEXT NOT NULL,
+    FOREIGN KEY (pet_id) REFERENCES pets(id)
+);
+
 

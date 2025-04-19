@@ -132,4 +132,13 @@
     padding: 20px;
   }
 
+  .find-page {
+    background: url("../images/etus.png") no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
   
+  .find-page .content {
+    text-align: center;
+    padding: 20px;
+  }

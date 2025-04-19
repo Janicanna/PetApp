@@ -10,7 +10,7 @@ def get_connection():
 def execute(sql, params=[]):
     con = get_connection()
     try:
-        result = con.execute(sql, params)
+        result = con.execute(sql, params)  # 🔄 Tämä rivi suorittaa SQL-kyselyn
         con.commit()
     except sqlite3.OperationalError as e:
         print("SQLite OperationalError:", e)

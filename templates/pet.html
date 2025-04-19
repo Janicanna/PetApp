@@ -84,7 +84,7 @@ Kuvaus: {{ pet.description }}</p>
 
 {% if session.username %}
   <form action="/pet/{{ pet.id }}/comment" method="post">
-    <textarea name="comment" rows="3" cols="40" maxlength="500" placeholder="Kirjoita kommentti"></textarea><br>
+    <textarea name="comment" rows="3" cols="40" maxlength="500" placeholder="Kirjoita kommentti" required></textarea><br>
     <button type="submit">Lähetä kommentti</button>
   </form>
 {% endif %}

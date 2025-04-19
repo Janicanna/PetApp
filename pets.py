@@ -22,9 +22,9 @@ def get_user_pets():
     """, [user_id])
 
 def get_pet_by_id(pet_id):
-    # Palauttaa yksittäisen lemmikin tiedot, mukaan lukien user_id
+    # Palauttaa yksittäisen lemmikin tiedot, mukaan lukien user_id ja breed_id
     pet = db.query("""
-        SELECT p.id, p.pet_name, p.description, p.animal_id,
+        SELECT p.id, p.pet_name, p.description, p.animal_id, p.breed_id,
                b.breed_name, a.name AS animal_name,
                p.user_id, u.username AS owner_username
         FROM pets p

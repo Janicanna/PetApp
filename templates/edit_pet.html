@@ -29,7 +29,7 @@
       Rotu:<br>
       <select name="breed_id" required>
         {% for breed in breeds %}
-          <option value="{{ breed.id }}" {% if breed.id == pet.breed_id %}selected{% endif %}>
+        <option value="{{ breed.id }}" {% if breed.id == selected_breed_id %}selected{% endif %}>
             {{ breed.breed_name }}
           </option>
         {% endfor %}
